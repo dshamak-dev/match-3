@@ -155,7 +155,7 @@ nav {
     --url: url(./public/pack/pack-item-4.png);
   }
   .item[data-value="5"] {
-    --color: 35,115,130
+    --color: 35,115,130;
     --url: url(./public/pack/pack-item-5.png);
   }
 }
