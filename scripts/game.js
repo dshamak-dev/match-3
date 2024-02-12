@@ -18,7 +18,7 @@ export class Game {
   gridSize = 6;
   grid = null;
 
-  values = [0, 1, 2, 3, 4, 5];
+  values = [1, 2, 3, 4, 5, 6];
 
   score = 0;
   counter = 0;

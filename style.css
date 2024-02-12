@@ -139,23 +139,21 @@ nav {
   }
 
   .item[data-value="1"] {
-    --color: 115, 35,130;
     --url: url(./public/pack/pack-item-1.png);
   }
   .item[data-value="2"] {
-    --color: 115,130,35;
     --url: url(./public/pack/pack-item-2.png);
   }
   .item[data-value="3"] {
-    --color: 35,115,130;
     --url: url(./public/pack/pack-item-3.png);
   }
   .item[data-value="4"] {
-    --color: 35,115,130;
     --url: url(./public/pack/pack-item-4.png);
   }
   .item[data-value="5"] {
-    --color: 35,115,130;
     --url: url(./public/pack/pack-item-5.png);
+  }
+  .item[data-value="6"] {
+    --url: url(./public/pack/pack-item-6.png);
   }
 }
