@@ -18,6 +18,8 @@ body {
 }
 
 #root {
+  --screenWidth: calc(min(100vw, 460px));
+
   min-height: 100vh;
   min-height: 100dvh;
   display: grid;
@@ -46,7 +48,7 @@ body {
 
 .grid-wrap {
   --offset: 5vw;
-  --gridWidth: calc(100vw - var(--offset) * 2);
+  --gridWidth: calc(var(--screenWidth) - var(--offset) * 2);
 
   padding: var(--offset) var(--offset);
   background-color: #2d2d2d;

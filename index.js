@@ -3,7 +3,7 @@ import { addSwipeEvent } from "./scripts/handlers.js";
 
 const storage = localStorage;
 const storageKey = "saved";
-const initialState = { gridSize: 5 };
+const initialState = {};
 let preloadedState = null;
 
 try {
