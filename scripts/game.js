@@ -6,7 +6,7 @@ import {
 import { copyObject, randomArrayItem } from "./utils.js";
 
 const COMBO_FACTOR = 0.4;
-
+const AVAILABLE_VALUES = [1, 2, 3, 4, 5, 6];
 export class Game {
   listeners = [];
   selected = [];
@@ -18,7 +18,7 @@ export class Game {
   gridSize = 6;
   grid = null;
 
-  values = [1, 2, 3, 4, 5, 6];
+  values;
 
   score = 0;
   counter = 0;
@@ -30,6 +30,10 @@ export class Game {
       this.reset();
     }
 
+    if (!this.values) {
+      this.values = AVAILABLE_VALUES;
+    }
+
     setTimeout(() => this.update(), 0);
   }
 
@@ -37,6 +41,8 @@ export class Game {
     const size = this.gridSize;
     const lastIndex = size - 1;
     this.grid = [];
+
+    this.values = AVAILABLE_VALUES;
 
     let index = -1;
     for (let y = 0; y < size; y++) {
@@ -314,18 +320,27 @@ export class Game {
       }
     });
 
-    const lastIndex = this.gridSize;
+    // if (this.checkMatches()) {
+    //   this.generateItems();
+    // }
+  }
+
+  checkMatches() {
+    const lastIndex = this.gridSize - 1;
+
     for (let row = lastIndex; row >= 0; row--) {
       for (let col = 0; col <= lastIndex; col++) {
         const index = this.positionToIndex({ x: col, y: row });
 
         const matched = this.getMatched(index);
 
-        if (matched?.length) {
-          return this.generateItems();
+        if (!!matched.length) {
+          return true;
         }
       }
     }
+
+    return false;
   }
 
   addEventListener(eventName, callback) {

@@ -162,9 +162,15 @@ export function validatePositions(grid) {
 export function createItem(grid) {
   grid.counter++;
 
+  const value = randomArrayItem(grid.values);
+
+  if (!value) {
+    console.log(grid.values);
+  }
+
   const item = {
     id: grid.counter,
-    value: randomArrayItem(grid.values),
+    value,
   };
 
   return item;
