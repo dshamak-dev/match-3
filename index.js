@@ -28,6 +28,7 @@ rootEl.style.setProperty("--cols", game.gridSize);
 rootEl.style.setProperty("--rows", game.gridSize);
 
 const infoEl = document.createElement("div");
+infoEl.classList.add('info-cover');
 
 const navEl = document.createElement("nav");
 
@@ -47,6 +48,12 @@ navEl.append(restartEl);
 
 infoEl.append(navEl);
 
+// actions el START
+const actionsEl = document.createElement("div");
+actionsEl.classList.add('action-list');
+infoEl.append(actionsEl);
+// actions el END
+
 rootEl.append(infoEl);
 
 const gridCover = document.createElement("div");
@@ -55,7 +62,7 @@ gridCover.classList.add("grid-wrap");
 const gridEl = document.createElement("div");
 gridEl.id = "grid";
 
-addSwipeEvent(gridEl, (direction) => {
+addSwipeEvent(gridCover, (direction) => {
   game.move(direction);
 });
 
@@ -78,9 +85,10 @@ function play(e) {
 
   isPaused = false;
   toggleEl.innerText = "pause";
-  interval = setInterval(() => {
-    game.update();
-  }, updateRate);
+  // interval = setInterval(() => {
+  //   game.update();
+  // }, updateRate);
+  game.update();
 
   rootEl.classList.remove("pause");
 }
@@ -88,7 +96,7 @@ function play(e) {
 function pause(e) {
   e?.stopPropagation();
 
-  clearInterval(interval);
+  // clearInterval(interval);
   interval = null;
 
   isPaused = true;
@@ -105,10 +113,58 @@ function togglePlay(e) {
   }
 }
 
+gridCover.addEventListener('click', (e) => {
+  const target = e.target;
+  const cellIndex = target.classList.contains('item') ? target.getAttribute('data-cell-index') : null;
+
+  if (cellIndex) {
+    game.click(game.findByIndex(Number(cellIndex)));
+  }
+});
+
+let lastState = null;
+let lastActionsState = null;
+let timeout = null;
+
+
 function render(data) {
   // gridEl.innerHTML = "";
 
-  const { grid, selected, destroy, disabled, score } = data;
+  const currentState = JSON.stringify(data);
+
+  clearTimeout(timeout);
+  timeout = null;
+
+  if (currentState !== lastState) {
+    lastState = currentState;
+  } else {
+    return;
+  }
+
+  timeout = setTimeout(() => {
+    game.update();
+  }, updateRate);
+
+  const { grid, selected, destroy, disabled, score, actions } = data;
+
+  const currentActionsState = JSON.stringify(actions);
+  if (lastActionsState !== currentActionsState) {
+    lastActionsState = currentActionsState;
+
+    actionsEl.innerHTML = "";
+    actions?.forEach(({ value, counter }) => {
+      const el = document.createElement("div");
+      el.classList.add('action');
+      const elIcon = document.createElement("div");
+      elIcon.classList.add('icon');
+      elIcon.setAttribute('data-value', value);
+      el.append(elIcon);
+
+      el.setAttribute('data-counter', counter);
+
+      actionsEl.append(el);
+    });
+  }
 
   const itemIds = grid
     .map(({ item }) => {
@@ -158,16 +214,18 @@ function render(data) {
         itemEl.classList.add("item");
         itemEl.setAttribute("data-id", item.id);
 
-        addSwipeEvent(itemEl, (direction) => {
-          game.move(direction);
-        });
+        // addSwipeEvent(itemEl, (direction) => {
+        //   game.move(direction);
+        // });
 
         gridCover.append(itemEl);
       }
 
-      itemEl.onclick = () => {
-        game.click(cell);
-      };
+      itemEl.setAttribute("data-cell-index", index);
+
+      // itemEl.onclick = () => {
+      //   game.click(cell);
+      // };
 
       itemEl.classList.toggle("selected", isSelected);
       itemEl.classList.toggle("destroy", isDestroy);

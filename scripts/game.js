@@ -12,6 +12,8 @@ export class Game {
   selected = [];
   destroy = [];
 
+  actions = [];
+
   maxSelected = 1;
   disabled = false;
 
@@ -32,6 +34,10 @@ export class Game {
 
     if (!this.values) {
       this.values = AVAILABLE_VALUES;
+    }
+
+    if (!this.actions) {
+      this.actions = [];
     }
 
     setTimeout(() => this.update(), 0);
@@ -88,13 +94,17 @@ export class Game {
       this.score += 1;
       this.removeItem(nextToDestroyIndex);
     } else {
-      this.updatePositions();
+      let ok = this.updatePositions();
 
-      if (validatePositions(this)) {
-        this.validate();
+      if (ok) {
+        ok = this.updateSpawn();
 
-        this.updateSpawn();
+        if (ok) {
+          ok = this.validate();
+        }
       }
+
+      this.disabled = !ok;
     }
 
     const json = this.json();
@@ -123,13 +133,15 @@ export class Game {
         const matched = this.getMatched(index);
 
         if (matched?.length) {
+          this.addActions(matched.map(it => this.findByIndex(it).item));
+
           matched.forEach((ind) => this.markToDestroy(ind));
           this.score += Math.floor(matched.length * COMBO_FACTOR);
         }
       }
     }
 
-    // this.update();
+    return !this.checkMatches();
   }
 
   getMatched(index) {
@@ -175,6 +187,15 @@ export class Game {
     cell.item = null;
   }
 
+  addActions(items) {
+    const action = {
+      value: items[0].value,
+      counter: items.length
+    };
+
+    this.actions.push(action);
+  }
+
   updateSpawn() {
     const targetCells = [...new Array(this.gridSize)].map((_, x) => {
       return this.findByPosition({ x, y: 0 });
@@ -183,7 +204,7 @@ export class Game {
     const emptyCells = targetCells.filter((cell) => !cell.item);
 
     if (!emptyCells.length) {
-      return;
+      return true;
     }
 
     emptyCells.forEach((cell) => {
@@ -192,7 +213,7 @@ export class Game {
       this.setCellItem(cell, item);
     });
 
-    // this.update();
+    return false;
   }
 
   updatePositions() {
@@ -216,6 +237,8 @@ export class Game {
     // if (!validatePositions(this)) {
     //   this.updatePositions();
     // }
+
+    return validatePositions(this);
   }
 
   click(cell) {
