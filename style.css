@@ -80,7 +80,7 @@ nav {
 #grid {
   --rows: 1;
   --cols: 1;
-  --offset: 5vw;
+  --offset: calc(var(--gridWidth) * 0.05);
   --totalOffset: calc(var(--cols) * var(--offset) - var(--offset));
   --availableWidth: calc(var(--gridWidth) - var(--totalOffset));
   --cellSize: calc(var(--availableWidth) / var(--cols));
