@@ -144,6 +144,9 @@ function render(data) {
       cellEl.style.setProperty("--x", x);
       cellEl.style.setProperty("--y", y);
 
+      const highlight = isOdd(y) ? !isOdd(x) : isOdd(x);
+      cellEl.classList.toggle("highlight", highlight);
+
       gridEl.append(cellEl);
     }
 
@@ -174,4 +177,8 @@ function render(data) {
       itemEl.setAttribute("data-value", item.value);
     }
   });
+}
+
+function isOdd(num) {
+  return Number(num) % 2 !== 0;
 }
