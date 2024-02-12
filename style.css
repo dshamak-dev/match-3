@@ -19,6 +19,16 @@ body {
 
 #root {
   --screenWidth: calc(min(100vw, 460px));
+  --rows: 1;
+  --cols: 1;
+
+  --offset: calc(var(--screenWidth) * 0.02);
+  --gridWidth: calc(var(--screenWidth) - var(--offset) * 2);
+  --totalOffset: calc(var(--cols) * var(--offset) - var(--offset));
+
+  --availableWidth: calc(var(--gridWidth) - var(--totalOffset));
+  --cellSize: calc(var(--availableWidth) / var(--cols));
+  --unit: calc(var(--cellSize) + var(--offset));
 
   min-height: 100vh;
   min-height: 100dvh;
@@ -47,9 +57,7 @@ body {
 }
 
 .grid-wrap {
-  --offset: 5vw;
-  --gridWidth: calc(var(--screenWidth) - var(--offset) * 2);
-
+  position: relative;
   padding: var(--offset) var(--offset);
   background-color: #2d2d2d;
 }
@@ -78,14 +86,6 @@ nav {
 }
 
 #grid {
-  --rows: 1;
-  --cols: 1;
-  --offset: calc(var(--gridWidth) * 0.05);
-  --totalOffset: calc(var(--cols) * var(--offset) - var(--offset));
-  --availableWidth: calc(var(--gridWidth) - var(--totalOffset));
-  --cellSize: calc(var(--availableWidth) / var(--cols));
-  --unit: calc(var(--cellSize) + var(--offset));
-
   position: relative;
 
   display: grid;
@@ -100,60 +100,59 @@ nav {
   .cell:nth-child(odd) {
     background-color: rgba(255,255,255,0.05);
   }
-
-  .item {
-    --color: 255,255,255;
-    --url: url(./public/pack/pack-item-0.png);
-    --x: 0;
-    --y: 0;
-    --itemOffset: calc(var(--cellSize) / -2);
-
-    position: absolute;
-    top: calc(var(--y) * var(---unit));
-    left: calc(var(--x) * var(---unit));
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    width: var(--cellSize);
-    height: var(--cellSize);
-
-    background: no-repeat center;
-    background-size: contain;
-    background-image: var(--url);
-
-    transition: left, top 1s ease;
-  }
-
-  /* .item:before {
-    content: attr(data-id);
-  } */
-
-  .item.selected {
-    border: 1px solid white;
-  }
-
-  .item.destroy {
-    animation: pulse 1.5s linear infinite;
-  }
-
-  .item[data-value="1"] {
-    --url: url(./public/pack/pack-item-1.png);
-  }
-  .item[data-value="2"] {
-    --url: url(./public/pack/pack-item-2.png);
-  }
-  .item[data-value="3"] {
-    --url: url(./public/pack/pack-item-3.png);
-  }
-  .item[data-value="4"] {
-    --url: url(./public/pack/pack-item-4.png);
-  }
-  .item[data-value="5"] {
-    --url: url(./public/pack/pack-item-5.png);
-  }
-  .item[data-value="6"] {
-    --url: url(./public/pack/pack-item-6.png);
-  }
 }
+
+.item {
+  --color: 255,255,255;
+  --url: url(./public/pack/pack-item-0.png);
+  --x: 0;
+  --y: 0;
+  --itemOffset: var(--offset);
+
+  position: absolute;
+  top: calc(var(--y) * var(--unit) + var(--itemOffset));
+  left: calc(var(--x) * var(--unit) + var(--itemOffset));
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: var(--cellSize);
+  height: var(--cellSize);
+
+  background: no-repeat center;
+  background-size: contain;
+  background-image: var(--url);
+
+  /* transition: left, top 1s ease; */
+}
+
+/* .item:before {
+  content: attr(data-id);
+} */
+
+.item.selected {
+  border: 1px solid white;
+}
+
+.item.destroy {
+  animation: pulse 1.5s linear infinite;
+}
+
+.item[data-value="1"] {
+  --url: url(./public/pack/pack-item-1.png);
+}
+.item[data-value="2"] {
+  --url: url(./public/pack/pack-item-2.png);
+}
+.item[data-value="3"] {
+  --url: url(./public/pack/pack-item-3.png);
+}
+.item[data-value="4"] {
+  --url: url(./public/pack/pack-item-4.png);
+}
+.item[data-value="5"] {
+  --url: url(./public/pack/pack-item-5.png);
+}
+.item[data-value="6"] {
+  --url: url(./public/pack/pack-item-6.png);

@@ -15,6 +15,7 @@ try {
 } catch (err) {}
 
 const rootEl = document.getElementById("root");
+
 rootEl.onclick = play;
 
 const game = new Game(preloadedState || initialState);
@@ -22,6 +23,9 @@ game.addEventListener("update", (payload) => {
   storage.setItem(storageKey, JSON.stringify(payload));
   render(payload);
 });
+
+rootEl.style.setProperty("--cols", game.gridSize);
+rootEl.style.setProperty("--rows", game.gridSize);
 
 const infoEl = document.createElement("div");
 
@@ -50,8 +54,10 @@ gridCover.classList.add("grid-wrap");
 
 const gridEl = document.createElement("div");
 gridEl.id = "grid";
-gridEl.style.setProperty("--cols", game.gridSize);
-gridEl.style.setProperty("--rows", game.gridSize);
+
+addSwipeEvent(gridEl, (direction) => {
+  game.move(direction);
+});
 
 gridCover.append(gridEl);
 
@@ -68,7 +74,7 @@ function play(e) {
 
   if (!isPaused) {
     return;
-  } 
+  }
 
   isPaused = false;
   toggleEl.innerText = "pause";
@@ -99,69 +105,73 @@ function togglePlay(e) {
   }
 }
 
-// window.requestAnimationFrame(handleUpdate);
-
-// function handleUpdate(time) {
-//   const isFirst = !lastUpdate;
-
-//   lastUpdate = time;
-
-//   if (!isFirst) {
-//     deltaTime = time - lastUpdate;
-//     game.update(deltaTime);
-//   }
-
-//   window.requestAnimationFrame(handleUpdate);
-// }
-
 function render(data) {
-  gridEl.innerHTML = "";
+  // gridEl.innerHTML = "";
 
   const { grid, selected, destroy, disabled, score } = data;
 
-  scoreEl.setAttribute('data-score', score || 0);
+  const itemIds = grid
+    .map(({ item }) => {
+      return item?.id?.toString();
+    })
+    .filter((id) => !!id);
+
+  scoreEl.setAttribute("data-score", score || 0);
 
   gridEl.classList.toggle("disabled", disabled);
+
+  [...document.querySelectorAll(`.item`)].forEach((elem) => {
+    const id = elem.getAttribute("data-id");
+
+    if (!itemIds.includes(id)) {
+      elem.remove();
+    }
+  });
 
   grid.forEach((cell) => {
     const { x, y, index, item } = cell;
     const isSelected = selected.includes(index);
     const isDestroy = destroy?.includes(index);
 
-    const cellEl = document.createElement("div");
-    cellEl.classList.add("cell");
-    cellEl.style.setProperty("--x", x);
-    cellEl.style.setProperty("--y", y);
+    let cellEl = document.querySelector(`.cell[data-index="${index}"]`);
+
+    if (!cellEl) {
+      cellEl = document.createElement("div");
+
+      cellEl.setAttribute("data-index", index);
+      cellEl.classList.add("cell");
+
+      cellEl.style.setProperty("--x", x);
+      cellEl.style.setProperty("--y", y);
+
+      gridEl.append(cellEl);
+    }
 
     if (item) {
-      const itemEl = document.createElement("div");
-      itemEl.classList.add("item");
+      let itemEl = document.querySelector(`.item[data-id="${item.id}"]`);
 
-      if (isSelected) {
-        itemEl.classList.add("selected");
+      if (!itemEl) {
+        itemEl = document.createElement("div");
+        itemEl.classList.add("item");
+        itemEl.setAttribute("data-id", item.id);
+
+        addSwipeEvent(itemEl, (direction) => {
+          game.move(direction);
+        });
+
+        gridCover.append(itemEl);
       }
-
-      if (isDestroy) {
-        itemEl.classList.add("destroy");
-      }
-
-      itemEl.style.setProperty("--x", item.x);
-      itemEl.style.setProperty("--y", item.y);
-
-      itemEl.setAttribute("data-id", item.id);
-      itemEl.setAttribute("data-value", item.value);
 
       itemEl.onclick = () => {
         game.click(cell);
       };
 
-      addSwipeEvent(itemEl, (direction) => {
-        game.move(direction);
-      });
+      itemEl.classList.toggle("selected", isSelected);
+      itemEl.classList.toggle("destroy", isDestroy);
 
-      cellEl.append(itemEl);
+      itemEl.style.setProperty("--x", item.x);
+      itemEl.style.setProperty("--y", item.y);
+      itemEl.setAttribute("data-value", item.value);
     }
-
-    gridEl.append(cellEl);
   });
 }
