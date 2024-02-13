@@ -204,10 +204,18 @@ nav {
 
 /* action */
 .action-list {
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 0.2rem);
+
+  width: 100%;
+
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
+
   gap: 1rem;
-  padding: 1rem;
+
   overflow-y: auto;
 }
 

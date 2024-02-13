@@ -1,3 +1,19 @@
+export function resolveGameActions(game) {
+  if (game.destroy?.length) {
+    return false;
+  }
+
+  if (!game.actions?.length) {
+    return true;
+  }
+
+  const nextAction = game.actions.shift();
+
+  // todo: apply action effect
+
+  return !game.actions.length;
+}
+
 export function createActionUI(game, parentEl) {
   const actionsEl = document.createElement("div");
   actionsEl.classList.add("action-list");

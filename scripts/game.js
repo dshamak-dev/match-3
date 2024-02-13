@@ -1,3 +1,4 @@
+import { resolveGameActions } from "./action.js";
 import {
   createItem,
   generateGridCells,
@@ -78,8 +79,16 @@ export class Game {
       ok = this.validate();
     }
 
+    if (ok) {
+      ok = resolveGameActions(this);
+    }
+
     this.disabled = !ok;
 
+    this.dispatch();
+  }
+
+  dispatch() {
     const json = this.json();
 
     this.listeners.forEach((it) => {
@@ -92,7 +101,7 @@ export class Game {
   togglePlay() {
     this.playing = !this.playing;
 
-    this.update();
+    this.dispatch();
   }
 
   json() {
@@ -233,7 +242,7 @@ export class Game {
       this.selected.splice(index, 1, cell.index);
     }
 
-    this.update();
+    this.dispatch();
   }
 
   // left, right, up, down
@@ -259,6 +268,7 @@ export class Game {
 
       return y > 0 ? b.y - a.y : a.y - b.y;
     });
+
     const canMove = selectedCells.every((cell) => {
       if (!cell.item) {
         return false;

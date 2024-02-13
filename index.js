@@ -1,4 +1,4 @@
-import { createActionUI } from "./scripts/action.js";
+import { createGameEventUI } from "./scripts/gameEvent.js";
 import { currentGame } from "./scripts/gameSession.js";
 import { createNavigation } from "./scripts/navigation.js";
 import { createTilesUI } from "./scripts/tiles.js";
@@ -16,8 +16,7 @@ const outputEl = document.createElement("div");
 outputEl.classList.add("output-cover");
 rootEl.append(outputEl);
 
-// createChapterUI(game, rootEl);
-createActionUI(game, outputEl);
+createGameEventUI(game, rootEl);
 
 
 createTilesUI(game, rootEl);

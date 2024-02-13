@@ -1,8 +1,11 @@
+import { createActionUI } from "./action.js";
 import { addSwipeEvent } from "./handlers.js";
 
 export function createTilesUI(game, parentEl) {
   const gridCover = document.createElement("div");
   gridCover.classList.add("grid-wrap");
+
+  createActionUI(game, gridCover);
 
   const gridEl = document.createElement("div");
   gridEl.id = "grid";
