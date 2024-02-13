@@ -39,23 +39,25 @@ export const addSwipeEvent = (elem, callback, threshold = 10) => {
       elapsedTime = new Date().getTime() - startTime; // get time elapsed
 
       // check that elapsed time is within specified, horizontal dist traveled >= threshold, and vertical dist traveled <= 100
-      let swipeX =
-        elapsedTime <= allowedTime && distX >= threshold
-          ? touchobj.pageX - startX
-          : 0;
-      let swipeY =
-        elapsedTime <= allowedTime && distY >= threshold
-          ? touchobj.pageY - startY
-          : 0;
+      // let swipeX =
+      //   elapsedTime <= allowedTime && distX >= threshold
+      //     ? touchobj.pageX - startX
+      //     : 0;
+      // let swipeY =
+      //   elapsedTime <= allowedTime && distY >= threshold
+      //     ? touchobj.pageY - startY
+      //     : 0;
 
       let x = Math.floor(distX);
       let y = Math.floor(distY);
 
-      if (Math.abs(x) < threshold) {
+      const horizontal = Math.abs(x);
+      if (horizontal < threshold) {
         x = 0;
       }
 
-      if (Math.abs(y) < threshold) {
+      const vertical = Math.abs(y);
+      if (vertical < threshold) {
         y = 0;
       }
 

@@ -1,8 +1,14 @@
 body {
+  --bg-url: url(https://i.pinimg.com/originals/eb/80/2c/eb802c9dad96a93a12468c380b19e1a4.gif);
   margin: 0;
   background-color: black;
   min-height: 100vh;
   min-height: 100dvh;
+
+  background-image: var(--bg-url);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 @keyframes pulse {
@@ -18,7 +24,7 @@ body {
 }
 
 #root {
-  --screenWidth: calc(min(100vw, 460px));
+  --screenWidth: min(100vw, 460px);
   --rows: 1;
   --cols: 1;
 
@@ -35,7 +41,11 @@ body {
   overflow: hidden;
 
   display: grid;
-  grid-template: 1fr auto / 1fr;
+  grid-template: auto 1fr auto / 1fr;
+
+  width: var(--screenWidth);
+  margin: 0 auto;
+  background-color: rgba(0, 0, 0, 0.75);
 }
 
 #root.pause:after {
@@ -60,7 +70,7 @@ body {
   background-color: rgba(0, 0, 0, 0.8);
 }
 
-.info-cover {
+.output-cover {
   height: 100%;
   overflow: hidden;
   display: grid;
@@ -120,7 +130,8 @@ nav {
   --color: 255, 255, 255;
   --x: 0;
   --y: 0;
-  --itemOffset: var(--offset);
+  --itemOffset: 0px;
+  /* --itemOffset: var(--offset); */
 
   position: absolute;
   top: calc(var(--y) * var(--unit) + var(--itemOffset));
@@ -134,7 +145,8 @@ nav {
   height: var(--cellSize);
 
   background: no-repeat center;
-  background-size: contain;
+  /* background-size: contain; */
+  background-size: 70%;
   background-image: var(--url);
 
   /* transition: left, top 1s ease; */
