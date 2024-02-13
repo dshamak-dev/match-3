@@ -1,0 +1,1 @@
+export function renderNavigation(game, parentEl) {}

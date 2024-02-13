@@ -39,7 +39,7 @@ body {
 }
 
 #root.pause:after {
-  content: "on pause";
+  content: "tap to play";
 
   position: fixed;
   left: 0;
@@ -54,8 +54,10 @@ body {
 
   text-transform: uppercase;
   color: white;
+  font-size: 2rem;
+  text-shadow: 1px 0 1px black;
 
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgba(0, 0, 0, 0.8);
 }
 
 .info-cover {
@@ -142,7 +144,6 @@ nav {
 .action-list {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
   gap: 1rem;
   padding: 1rem;
   overflow-y: auto;

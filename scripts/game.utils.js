@@ -1,5 +1,18 @@
 import { randomArrayItem } from "./utils.js";
 
+export function resolveGameItems(game) {
+  if (!game || !game.destroy?.length) {
+    return true;
+  }
+
+  const nextToDestroyIndex = game.destroy.shift();
+
+  game.score += 1;
+  game.removeItem(nextToDestroyIndex);
+
+  return !game.destroy.length;
+}
+
 export const getMatchedItems = (grid, cellIndex) => {
   const cell = grid.findByIndex(cellIndex);
 
@@ -174,4 +187,66 @@ export function createItem(grid) {
   };
 
   return item;
+}
+
+export function restartGame(game) {
+  const initial = {
+    selected: [],
+    destroy: [],
+
+    actions: [],
+    event: null,
+
+    maxSelected: 2,
+    disabled: false,
+
+    gridSize: 6,
+    grid: null,
+
+    values: null,
+
+    score: 0,
+    counter: 0,
+  };
+
+  Object.assign(game, initial);
+}
+
+export function generateGridCells(game) {
+  game.grid = [];
+
+  const size = game.gridSize;
+  const lastIndex = size - 1;
+
+  let index = -1;
+  for (let y = 0; y < size; y++) {
+    for (let x = 0; x < size; x++) {
+      index++;
+      const closest = [];
+
+      if (x > 0) {
+        closest.push({ x: x - 1, y });
+      }
+      if (x < lastIndex) {
+        closest.push({ x: x + 1, y });
+      }
+      if (y > 0) {
+        closest.push({ x: x, y: y - 1 });
+      }
+      if (y < lastIndex) {
+        closest.push({ x: x, y: y + 1 });
+      }
+
+      const cell = {
+        id: index,
+        index,
+        x,
+        y,
+        closest,
+        item: null,
+      };
+
+      game.grid.push(cell);
+    }
+  }
 }

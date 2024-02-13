@@ -28,18 +28,13 @@ rootEl.style.setProperty("--cols", game.gridSize);
 rootEl.style.setProperty("--rows", game.gridSize);
 
 const infoEl = document.createElement("div");
-infoEl.classList.add('info-cover');
+infoEl.classList.add("info-cover");
 
 const navEl = document.createElement("nav");
 
 const scoreEl = document.createElement("div");
 scoreEl.innerText = "score:";
 navEl.append(scoreEl);
-
-const toggleEl = document.createElement("div");
-toggleEl.innerText = "play";
-toggleEl.onclick = togglePlay;
-navEl.append(toggleEl);
 
 const restartEl = document.createElement("div");
 restartEl.innerText = "restart";
@@ -50,7 +45,7 @@ infoEl.append(navEl);
 
 // actions el START
 const actionsEl = document.createElement("div");
-actionsEl.classList.add('action-list');
+actionsEl.classList.add("action-list");
 infoEl.append(actionsEl);
 // actions el END
 
@@ -84,10 +79,6 @@ function play(e) {
   }
 
   isPaused = false;
-  toggleEl.innerText = "pause";
-  // interval = setInterval(() => {
-  //   game.update();
-  // }, updateRate);
   game.update();
 
   rootEl.classList.remove("pause");
@@ -100,22 +91,15 @@ function pause(e) {
   interval = null;
 
   isPaused = true;
-  toggleEl.innerText = "play";
 
   rootEl.classList.add("pause");
 }
 
-function togglePlay(e) {
-  if (interval) {
-    pause(e);
-  } else {
-    play(e);
-  }
-}
-
-gridCover.addEventListener('click', (e) => {
+gridCover.addEventListener("click", (e) => {
   const target = e.target;
-  const cellIndex = target.classList.contains('item') ? target.getAttribute('data-cell-index') : null;
+  const cellIndex = target.classList.contains("item")
+    ? target.getAttribute("data-cell-index")
+    : null;
 
   if (cellIndex) {
     game.click(game.findByIndex(Number(cellIndex)));
@@ -125,7 +109,6 @@ gridCover.addEventListener('click', (e) => {
 let lastState = null;
 let lastActionsState = null;
 let timeout = null;
-
 
 function render(data) {
   // gridEl.innerHTML = "";
@@ -154,13 +137,13 @@ function render(data) {
     actionsEl.innerHTML = "";
     actions?.forEach(({ value, counter }) => {
       const el = document.createElement("div");
-      el.classList.add('action');
+      el.classList.add("action");
       const elIcon = document.createElement("div");
-      elIcon.classList.add('icon');
-      elIcon.setAttribute('data-value', value);
+      elIcon.classList.add("icon");
+      elIcon.setAttribute("data-value", value);
       el.append(elIcon);
 
-      el.setAttribute('data-counter', counter);
+      el.setAttribute("data-counter", counter);
 
       actionsEl.append(el);
     });

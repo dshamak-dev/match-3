@@ -1,6 +1,9 @@
 import {
   createItem,
+  generateGridCells,
   getMatchedItems,
+  resolveGameItems,
+  restartGame,
   validatePositions,
 } from "./game.utils.js";
 import { copyObject, randomArrayItem } from "./utils.js";
@@ -13,6 +16,7 @@ export class Game {
   destroy = [];
 
   actions = [];
+  event = null;
 
   maxSelected = 1;
   disabled = false;
@@ -44,68 +48,32 @@ export class Game {
   }
 
   reset() {
-    const size = this.gridSize;
-    const lastIndex = size - 1;
-    this.grid = [];
-
+    restartGame(this);
     this.values = AVAILABLE_VALUES;
 
-    let index = -1;
-    for (let y = 0; y < size; y++) {
-      for (let x = 0; x < size; x++) {
-        index++;
-        const closest = [];
-
-        if (x > 0) {
-          closest.push({ x: x - 1, y });
-        }
-        if (x < lastIndex) {
-          closest.push({ x: x + 1, y });
-        }
-        if (y > 0) {
-          closest.push({ x: x, y: y - 1 });
-        }
-        if (y < lastIndex) {
-          closest.push({ x: x, y: y + 1 });
-        }
-
-        const cell = {
-          id: index,
-          index,
-          x,
-          y,
-          closest,
-          item: null,
-        };
-
-        this.grid.push(cell);
-      }
-    }
-
-    this.generateItems();
+    generateGridCells(this);
   }
 
   update() {
-    this.disabled = !!this.destroy?.length;
+    let ok = true;
 
-    if (this.destroy?.length) {
-      const nextToDestroyIndex = this.destroy.shift();
-
-      this.score += 1;
-      this.removeItem(nextToDestroyIndex);
-    } else {
-      let ok = this.updatePositions();
-
-      if (ok) {
-        ok = this.updateSpawn();
-
-        if (ok) {
-          ok = this.validate();
-        }
-      }
-
-      this.disabled = !ok;
+    if (ok) {
+      ok = resolveGameItems(this);
     }
+
+    if (ok) {
+      ok = this.updatePositions();
+    }
+
+    if (ok) {
+      ok = this.updateSpawn();
+    }
+
+    if (ok) {
+      ok = this.validate();
+    }
+
+    this.disabled = !ok;
 
     const json = this.json();
 
@@ -133,7 +101,7 @@ export class Game {
         const matched = this.getMatched(index);
 
         if (matched?.length) {
-          this.addActions(matched.map(it => this.findByIndex(it).item));
+          this.addActions(matched.map((it) => this.findByIndex(it).item));
 
           matched.forEach((ind) => this.markToDestroy(ind));
           this.score += Math.floor(matched.length * COMBO_FACTOR);
@@ -190,7 +158,7 @@ export class Game {
   addActions(items) {
     const action = {
       value: items[0].value,
-      counter: items.length
+      counter: items.length,
     };
 
     this.actions.push(action);
@@ -295,6 +263,8 @@ export class Game {
 
       this.swap(cell, this.findByIndex(targetIndex));
     });
+
+    this.update();
   }
 
   findByIndex(index) {
@@ -319,8 +289,6 @@ export class Game {
 
     this.setCellItem(a, b.item);
     this.setCellItem(b, a.item);
-
-    this.update();
   }
 
   setCellItem(cell, item) {
