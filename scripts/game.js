@@ -30,11 +30,15 @@ export class Game {
   score = 0;
   counter = 0;
 
+  playing = false;
+
   constructor(props = {}) {
     Object.assign(this, props);
 
+    this.playing = true;
+
     if (!this.grid) {
-      this.reset();
+      this.restart();
     }
 
     if (!this.values) {
@@ -48,7 +52,7 @@ export class Game {
     setTimeout(() => this.update(), 0);
   }
 
-  reset() {
+  restart() {
     restartGame(this);
     this.values = AVAILABLE_VALUES;
 
@@ -56,7 +60,7 @@ export class Game {
   }
 
   update() {
-    let ok = true;
+    let ok = this.playing;
 
     if (ok) {
       ok = resolveGameItems(this);
@@ -83,6 +87,12 @@ export class Game {
         it.callback(json);
       }
     });
+  }
+
+  togglePlay() {
+    this.playing = !this.playing;
+
+    this.update();
   }
 
   json() {
@@ -228,6 +238,10 @@ export class Game {
 
   // left, right, up, down
   move({ x, y }) {
+    if (x === 0 && y === 0) {
+      return;
+    }
+
     if (this.disabled) {
       return;
     }
@@ -236,7 +250,15 @@ export class Game {
       return;
     }
 
-    const selectedCells = this.selected.map((index) => this.grid[index]);
+    const selectedCells = this.selected.map((index) => {
+      return this.findByIndex(index);
+    }).sort((a, b) => {
+      if (x !== 0) {
+        return x > 0 ? b.x - a.x : a.x - b.x;
+      }
+
+      return y > 0 ? b.y - a.y : a.y - b.y;
+    });
     const canMove = selectedCells.every((cell) => {
       if (!cell.item) {
         return false;
