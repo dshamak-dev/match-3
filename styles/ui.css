@@ -1,0 +1,29 @@
+.health-bar {
+  --color: red;
+  --progress: 0;
+
+  position: relative;
+  background-color: #2d2d2d;
+  width: 100%;
+}
+.health-bar:before,
+.health-bar:after {
+  left: 0;
+  top: 0;
+  height: 100%;
+}
+.health-bar:before {
+  position: absolute;
+  content: "";
+  width: calc(var(--progress) * 100%);
+  background-color: var(--color);
+}
+
+.health-bar:after {
+  position: relative;
+  content: attr(data-value);
+  display: block;
+  width: 100%;
+  text-align: center;
+  color: white;
+}

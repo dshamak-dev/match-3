@@ -1,5 +1,6 @@
-@import url('./styles/stage.css');
 @import url('./styles/animation.css');
+@import url('./styles/ui.css');
+@import url('./styles/stage.css');
 @import url('./styles/character.css');
 
 body {

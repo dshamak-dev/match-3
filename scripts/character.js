@@ -191,7 +191,7 @@ export function createCharacterUI(game, parentEl) {
     const healthState = healthLeft / maxHealth;
 
     characterEl.style.setProperty("--avatalUrl", `url(${imageUrl})`);
-    characterEl.style.setProperty("--healthState", healthState);
+    healthEl.style.setProperty("--progress", healthState);
     healthEl.setAttribute("data-value", healthLeft);
   });
 }

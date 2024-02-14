@@ -39,33 +39,9 @@
   }
 
   .health-bar {
-    --bgColor: #2d603c;
-    --barColor: #0cc170;
+    --color: #0cc170;
 
-    position: relative;
-    background-color: var(--bgColor);
     width: 6rem;
-  }
-  .health-bar:before,
-  .health-bar:after {
-    left: 0;
-    top: 0;
-    height: 100%;
-  }
-  .health-bar:before {
-    position: absolute;
-    content: "";
-    width: calc(var(--healthState) * 100%);
-    background-color: var(--barColor);
-  }
-
-  .health-bar:after {
-    position: relative;
-    content: attr(data-value);
-    display: block;
-    width: 100%;
-    text-align: center;
-    color: white;
   }
 
   .effects {

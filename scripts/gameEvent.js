@@ -157,6 +157,8 @@ export function renderEvent(game, parentEl) {
   enemyEl.style.setProperty("--imageUrl", `url(${enemy.imageUrl})`);
 
   let enemyStatsEl = parentEl.querySelector(".enemy-stats");
+  let enemyProps = parentEl.querySelector(".props");
+  let enemyHealthBar = parentEl.querySelector(".health-bar");
 
   if (!enemyStatsEl) {
     enemyStatsEl = document.createElement("div");
@@ -165,11 +167,25 @@ export function renderEvent(game, parentEl) {
     parentEl.append(enemyStatsEl);
   }
 
-  const { hits = 0, health } = enemy;
+  if (!enemyProps) {
+    enemyProps = document.createElement("div");
+    enemyProps.classList.add("props");
+    enemyStatsEl.append(enemyProps);
+  }
+
+  if (!enemyHealthBar) {
+    enemyHealthBar = document.createElement("div");
+    enemyHealthBar.classList.add("health-bar");
+    enemyStatsEl.append(enemyHealthBar);
+  }
+
+  const { hits = 0, health, damage } = enemy;
 
   const healthLeft = health - hits;
-  const healthFactor = !hits ? 1 : healthLeft / health;
+  const healthState = !hits ? 1 : healthLeft / health;
 
-  enemyStatsEl.style.setProperty("--health", healthFactor);
-  enemyStatsEl.setAttribute("data-value", healthLeft);
+  enemyProps.innerHTML = `<div><div class="icon sword"></div><div>${damage}</div></div>`;
+
+  enemyHealthBar.style.setProperty("--progress", healthState);
+  enemyHealthBar.setAttribute("data-value", healthLeft);
 }

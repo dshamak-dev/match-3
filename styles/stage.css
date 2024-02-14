@@ -19,35 +19,25 @@
   }
 
   .enemy-stats {
-    --health: 1;
-
     position: absolute;
     left: 1rem;
     right: 1rem;
     bottom: 2rem;
-    background: #843c42;
-  }
-  .enemy-stats:before,
-  .enemy-stats:after {
-    left: 0;
-    top: 0;
-    height: 100%;
-    
-  }
-  .enemy-stats:before {
-    position: absolute;
-    content: "";
-    width: calc(var(--health) * 100%);
-    background-color: red;
   }
 
-  .enemy-stats:after {
-    position: relative;
-    content: attr(data-value);
-    display: block;
-    width: 100%;
-    text-align: center;
+  .props {
+    display: flex;
+    gap: 8px;
     color: white;
+
+    > div {
+      display: flex;
+      gap: 4px;
+    }
+  }
+
+  .health-bar {
+    --color: #843c42;
   }
 }
 
