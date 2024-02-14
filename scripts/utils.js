@@ -2,6 +2,10 @@ export const copyObject = (obj) => {
   return JSON.parse(JSON.stringify(obj));
 };
 
+export const concatObjects = (...records) => {
+  return Object.assign({}, ...records.map(it => copyObject(it)));
+};
+
 export const randomNumber = (min = 0, max = 1, floor = false) => {
   const value = (Math.random() * (max - min)) + min;
 

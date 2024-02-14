@@ -100,7 +100,7 @@ export function createGameEventUI(game, parentEl) {
   eventStartBtnEl.innerText = "go next";
 
   eventStartBtnEl.onclick = (e) => {
-    game.startEvent(createEvent());
+    game.startNextEvent();
   };
 
   eventSummaryEl.append(eventStartBtnEl);

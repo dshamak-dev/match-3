@@ -212,6 +212,7 @@ export function restartGame(game) {
     counter: 0,
 
     character: null,
+    chapter: null,
     event: null,
   };
 

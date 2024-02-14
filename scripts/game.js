@@ -1,3 +1,4 @@
+import { Chapter, createChapter } from "./chapter.js";
 import { Character, createCharacter, resolveCharacter } from "./character.js";
 import { resolveGameCombos } from "./combo.js";
 import {
@@ -16,6 +17,7 @@ const COMBO_FACTOR = 0.4;
 const AVAILABLE_VALUES = TILE_VALUES;
 
 export class Game {
+  chapter = null;
   listeners = [];
   selected = [];
   destroy = [];
@@ -65,6 +67,9 @@ export class Game {
 
     // todo: show character creation screen
     this.character = this.character ? new Character(this.character) : createCharacter(this);
+
+    // todo: select next chapter on ui
+    this.chapter = this.chapter ? new Chapter(this.chapter) : createChapter(this);
 
     setTimeout(() => this.update(), 0);
   }
@@ -141,8 +146,12 @@ export class Game {
     return resolveGameCombos(this);
   }
 
-  startEvent(event) {
-    this.event = event;
+  startNextEvent() {
+    if (!this.chapter) {
+      this.chapter = createChapter(this);
+    }
+
+    this.event = this.chapter.getNextEvent();
     this.turnCounter = 0;
     this.turnActionCounter = 0;
     this.turnEnd = false;
