@@ -1,11 +1,46 @@
-import { createActionUI } from "./action.js";
+import { createComboUI } from "./combo.js";
 import { addSwipeEvent } from "./handlers.js";
+
+export const TILES = [
+  {
+    value: 1,
+    type: "power",
+    imageUrl: "",
+  },
+  {
+    value: 2,
+    type: "block",
+    imageUrl: "",
+  }, {
+    value: 3,
+    type: "arrow",
+    imageUrl: "",
+  }, {
+    value: 4,
+    type: "health",
+    imageUrl: "",
+  }, {
+    value: 5,
+    type: "sword",
+    imageUrl: "",
+  }, {
+    value: 6,
+    type: "money",
+    imageUrl: "",
+  }
+];
+
+export const TILE_VALUES = TILES.map((it) => it.value);
+
+export function findTileByValue(value) {
+  return TILES.find((it) => it.value === value);
+}
 
 export function createTilesUI(game, parentEl) {
   const gridCover = document.createElement("div");
   gridCover.classList.add("grid-wrap");
 
-  createActionUI(game, gridCover);
+  createComboUI(game, gridCover);
 
   const gridEl = document.createElement("div");
   gridEl.id = "grid";

@@ -1,4 +1,5 @@
-import { resolveGameActions } from "./action.js";
+import { Character, createCharacter, resolveCharacter } from "./character.js";
+import { resolveGameCombos } from "./combo.js";
 import {
   createItem,
   generateGridCells,
@@ -7,20 +8,28 @@ import {
   restartGame,
   validatePositions,
 } from "./game.utils.js";
-import { copyObject, randomArrayItem } from "./utils.js";
+import { resolveGameEvent } from "./gameEvent.js";
+import { TILE_VALUES } from "./tiles.js";
+import { copyObject } from "./utils.js";
 
 const COMBO_FACTOR = 0.4;
-const AVAILABLE_VALUES = [1, 2, 3, 4, 5, 6];
+const AVAILABLE_VALUES = TILE_VALUES;
 
 export class Game {
   listeners = [];
   selected = [];
   destroy = [];
 
-  actions = [];
+  combos = [];
+
+  maxActions = 1;
+  turnActionCounter = 0;
+  turnCounter = 0;
+
+  character = null;
+
   event = null;
 
-  maxSelected = 1;
   disabled = false;
 
   gridSize = 6;
@@ -32,6 +41,10 @@ export class Game {
   counter = 0;
 
   playing = false;
+
+  get canAct() {
+    return !this.turnEnd && this.turnActionCounter < this.maxActions;
+  }
 
   constructor(props = {}) {
     Object.assign(this, props);
@@ -46,9 +59,12 @@ export class Game {
       this.values = AVAILABLE_VALUES;
     }
 
-    if (!this.actions) {
-      this.actions = [];
+    if (!this.combos) {
+      this.combos = [];
     }
+
+    // todo: show character creation screen
+    this.character = this.character ? new Character(this.character) : createCharacter(this);
 
     setTimeout(() => this.update(), 0);
   }
@@ -58,32 +74,31 @@ export class Game {
     this.values = AVAILABLE_VALUES;
 
     generateGridCells(this);
+
+    // todo: show character creation screen
+    this.character = createCharacter(this);
+
+    this.setPlay(true);
+    this.update();
   }
 
   update() {
-    let ok = this.playing;
+    let ok = this.playing && !!this.event;
 
+    // todo: use generator to navigate through steps
     if (ok) {
-      ok = resolveGameItems(this);
+      ok = resolveCharacter(this);
     }
 
     if (ok) {
-      ok = this.updatePositions();
+      ok = this.resolveTurn();
     }
 
-    if (ok) {
-      ok = this.updateSpawn();
+    if (ok && this.validateTurnEnd()) {
+      ok = resolveGameEvent(this);
     }
 
-    if (ok) {
-      ok = this.validate();
-    }
-
-    if (ok) {
-      ok = resolveGameActions(this);
-    }
-
-    this.disabled = !ok;
+    this.disabled = !ok || !this.canAct;
 
     this.dispatch();
   }
@@ -98,10 +113,66 @@ export class Game {
     });
   }
 
-  togglePlay() {
+  addCoins(value) {
+    if (!this.coins) {
+      this.coins = 0;
+    }
+
+    this.coins += value || 0;
+  }
+
+  resolveTurn() {
+    if (!resolveGameItems(this)) {
+      return false;
+    }
+
+    if (!this.updatePositions()) {
+      return false;
+    }
+
+    if (!this.updateSpawn()) {
+      return false;
+    }
+
+    if (!this.validate()) {
+      return false;
+    }
+
+    return resolveGameCombos(this);
+  }
+
+  startEvent(event) {
+    this.event = event;
+    this.turnCounter = 0;
+    this.turnActionCounter = 0;
+    this.turnEnd = false;
+
+    this.update();
+  }
+
+  validateTurnStart() {
+    // todo: validate next turn
+    return true;
+  }
+
+  startNextTurn() {
+    this.turnActionCounter = 0;
+    this.turnCounter++;
+    this.turnEnd = false;
+  }
+
+  validateTurnEnd() {
+    return this.turnEnd;
+  }
+
+  setPlay() {
     this.playing = !this.playing;
 
     this.dispatch();
+  }
+
+  togglePlay() {
+    this.setPlay(!this.playing);
   }
 
   json() {
@@ -121,7 +192,7 @@ export class Game {
         const matched = this.getMatched(index);
 
         if (matched?.length) {
-          this.addActions(matched.map((it) => this.findByIndex(it).item));
+          this.addCombos(matched.map((it) => this.findByIndex(it).item));
 
           matched.forEach((ind) => this.markToDestroy(ind));
           this.score += Math.floor(matched.length * COMBO_FACTOR);
@@ -175,13 +246,13 @@ export class Game {
     cell.item = null;
   }
 
-  addActions(items) {
+  addCombos(items) {
     const action = {
       value: items[0].value,
       counter: items.length,
     };
 
-    this.actions.push(action);
+    this.combos.push(action);
   }
 
   updateSpawn() {
@@ -222,10 +293,6 @@ export class Game {
       }
     }
 
-    // if (!validatePositions(this)) {
-    //   this.updatePositions();
-    // }
-
     return validatePositions(this);
   }
 
@@ -237,7 +304,7 @@ export class Game {
     if (this.selected.includes(cell.index)) {
       this.selected = this.selected.filter((it) => it !== cell.index);
     } else {
-      const index = this.selected.length % this.maxSelected;
+      const index = this.selected.length % this.maxActions;
 
       this.selected.splice(index, 1, cell.index);
     }
@@ -245,7 +312,6 @@ export class Game {
     this.dispatch();
   }
 
-  // left, right, up, down
   move({ x, y }) {
     if (x === 0 && y === 0) {
       return;
@@ -259,15 +325,17 @@ export class Game {
       return;
     }
 
-    const selectedCells = this.selected.map((index) => {
-      return this.findByIndex(index);
-    }).sort((a, b) => {
-      if (x !== 0) {
-        return x > 0 ? b.x - a.x : a.x - b.x;
-      }
+    const selectedCells = this.selected
+      .map((index) => {
+        return this.findByIndex(index);
+      })
+      .sort((a, b) => {
+        if (x !== 0) {
+          return x > 0 ? b.x - a.x : a.x - b.x;
+        }
 
-      return y > 0 ? b.y - a.y : a.y - b.y;
-    });
+        return y > 0 ? b.y - a.y : a.y - b.y;
+      });
 
     const canMove = selectedCells.every((cell) => {
       if (!cell.item) {
@@ -285,6 +353,11 @@ export class Game {
     if (!canMove) {
       return;
     }
+
+    this.turnActionCounter += this.selected.length;
+
+    // has actions used this turn
+    this.turnEnd = true;
 
     this.selected = [];
 
@@ -343,10 +416,6 @@ export class Game {
         this.setCellItem(cell, item);
       }
     });
-
-    // if (this.checkMatches()) {
-    //   this.generateItems();
-    // }
   }
 
   checkMatches() {

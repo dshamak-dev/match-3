@@ -194,10 +194,13 @@ export function restartGame(game) {
     selected: [],
     destroy: [],
 
-    actions: [],
+    combos: [],
     event: null,
 
-    maxSelected: 2,
+    maxActions: 2,
+    turnActionCounter: 0,
+    turnCounter: 0,
+
     disabled: false,
 
     gridSize: 6,
@@ -207,6 +210,9 @@ export function restartGame(game) {
 
     score: 0,
     counter: 0,
+
+    character: null,
+    event: null,
   };
 
   Object.assign(game, initial);

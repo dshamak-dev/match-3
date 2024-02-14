@@ -1,0 +1,80 @@
+.character {
+  --imageUrl: url(/public/pack/avatar-0.png);
+  --healthState: 1;
+
+  position: relative;
+  display: grid;
+  grid-template: 1rem / 2rem auto;
+  gap: 0.5rem;
+
+  .avatar {
+    position: relative;
+    top: 0;
+    left: 0;
+    z-index: 3;
+
+    width: 2rem;
+  }
+  .avatar:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 2rem;
+    height: 2rem;
+
+    background-image: var(--imageUrl);
+    background-size: contain;
+    background-position: center;
+    background-color: black;
+
+    border: 1px solid #90854d;
+  }
+
+  .character-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .health-bar {
+    --bgColor: #2d603c;
+    --barColor: #0cc170;
+
+    position: relative;
+    background-color: var(--bgColor);
+    width: 6rem;
+  }
+  .health-bar:before,
+  .health-bar:after {
+    left: 0;
+    top: 0;
+    height: 100%;
+  }
+  .health-bar:before {
+    position: absolute;
+    content: "";
+    width: calc(var(--healthState) * 100%);
+    background-color: var(--barColor);
+  }
+
+  .health-bar:after {
+    position: relative;
+    content: attr(data-value);
+    display: block;
+    width: 100%;
+    text-align: center;
+    color: white;
+  }
+
+  .effects {
+    display: flex;
+    gap: 8px;
+
+    .effect {
+      display: flex;
+      gap: 2px;
+    }
+  }
+}

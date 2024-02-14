@@ -1,3 +1,7 @@
+@import url('./styles/stage.css');
+@import url('./styles/animation.css');
+@import url('./styles/character.css');
+
 body {
   --bg-url: url(https://i.pinimg.com/originals/eb/80/2c/eb802c9dad96a93a12468c380b19e1a4.gif);
   margin: 0;
@@ -70,11 +74,8 @@ body {
   background-color: rgba(0, 0, 0, 0.8);
 }
 
-.output-cover {
-  height: 100%;
-  overflow: hidden;
-  display: grid;
-  grid-template: auto 1fr / 1fr;
+.relative {
+  position: relative;
 }
 
 .grid-wrap {
@@ -84,7 +85,7 @@ body {
 }
 
 .disabled {
-  filter: brightness(0.9);
+  filter: brightness(0.6);
 }
 
 nav {
@@ -95,7 +96,7 @@ nav {
   gap: 1rem;
   align-items: center;
   padding: 0.5rem 1rem;
-  z-index: 2;
+  z-index: 3;
 }
 
 .hidden {
@@ -250,25 +251,31 @@ nav {
 }
 
 .icon[data-value="1"],
+.icon.power,
 .item[data-value="1"] {
   --url: url(./public/pack/pack-item-1.png);
 }
+.icon.block,
 .icon[data-value="2"],
 .item[data-value="2"] {
   --url: url(./public/pack/pack-item-2.png);
 }
+.icon.arrow,
 .icon[data-value="3"],
 .item[data-value="3"] {
   --url: url(./public/pack/pack-item-3.png);
 }
+.icon.heal,
 .icon[data-value="4"],
 .item[data-value="4"] {
   --url: url(./public/pack/pack-item-4.png);
 }
+.icon.sword,
 .icon[data-value="5"],
 .item[data-value="5"] {
   --url: url(./public/pack/pack-item-5.png);
 }
+.icon.coin,
 .icon[data-value="6"],
 .item[data-value="6"] {
   --url: url(./public/pack/pack-item-6.png);
