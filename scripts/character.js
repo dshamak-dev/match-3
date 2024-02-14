@@ -5,7 +5,7 @@ export class Character {
   inventory = [];
   effects = [];
   coins = 0;
-  imageUrl = "/public/pack/avatar-0.png";
+  imageUrl = "./public/pack/avatar-0.png";
 
   constructor(props = null) {
     Object.assign(this, props);

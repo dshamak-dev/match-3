@@ -1,5 +1,5 @@
 .character {
-  --imageUrl: url(/public/pack/avatar-0.png);
+  --imageUrl: url(./public/pack/avatar-0.png);
   --healthState: 1;
 
   position: relative;

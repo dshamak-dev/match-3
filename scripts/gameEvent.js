@@ -1,4 +1,4 @@
-import { randomArrayItem } from "./utils.js";
+import { copyObject, randomArrayItem } from "./utils.js";
 
 export function resolveGameEvent(game) {
   if (!game.event) {
@@ -85,7 +85,7 @@ const EVENTS = [
 ];
 
 export function createEvent() {
-  return randomArrayItem(EVENTS);
+  return copyObject(randomArrayItem(EVENTS));
 }
 
 export function createGameEventUI(game, parentEl) {
