@@ -39,3 +39,18 @@ export const randomId = (length = 5) => {
     return isUppercase ? key.toUpperCase() : key;
   })).join('');
 };
+
+const PATH_RULES = {
+  start: /\/$/,
+  default: /^\//
+};
+const ROOT_PATH = location.href;
+export function resolvePath(url) {
+  const parts = [ROOT_PATH, url].map((it, index) => {
+    const reg = index === 0 ? PATH_RULES.start : PATH_RULES.default;
+
+    return it.replace(reg, '');
+  });
+
+  return parts.join("/");
+}

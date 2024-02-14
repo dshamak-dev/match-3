@@ -1,3 +1,5 @@
+import { resolvePath } from "./utils.js";
+
 export class Character {
   maxHealth = 10;
   health;
@@ -5,7 +7,7 @@ export class Character {
   inventory = [];
   effects = [];
   coins = 0;
-  imageUrl = "./public/pack/avatar-0.png";
+  imageUrl = resolvePath("/public/pack/avatar-0.png");
 
   constructor(props = null) {
     Object.assign(this, props);
